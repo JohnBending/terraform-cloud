@@ -1,3 +1,7 @@
+provider "aws" {
+  region = "us-east-1" // Region where to Create Resources
+}
+
 data "aws_ami" "latest_amazon_linux" {
   owners      = ["137112412989"]
   most_recent = true
