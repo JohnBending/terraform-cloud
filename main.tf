@@ -11,6 +11,7 @@ resource "aws_instance" "web" {
   ami                    = data.aws_ami.latest_amazon_linux.id
   instance_type          = var.server_size
   vpc_security_group_ids = [aws_security_group.web.id]
+  key_name               = "lesson-50"
   user_data              = <<EOF
 #!/bin/bash
 wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
