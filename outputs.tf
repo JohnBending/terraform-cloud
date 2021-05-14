@@ -1,5 +1,5 @@
 output "webserver_instance_id" {
-  value = aws_instance.my_webserver.id
+  value = aws_instance.my_ubuntu.id
 }
 
 output "WebServer_public_ip" {
