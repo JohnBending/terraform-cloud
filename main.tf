@@ -1,7 +1,3 @@
-provider "aws" {
-  region                  = "us-east-2"
-  shared_credentials_file = "/Users/iandreev/.aws/credentials"
-}
 
 # Создание и привязывание IP адресса
 resource "aws_eip" "my_static_ip" {
