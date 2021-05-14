@@ -11,4 +11,3 @@ sudo apt install -y openjdk-11-jdk
 java -version
 sudo systemctl daemon-reload
 sudo systemctl start jenkins
-sudo systemctl status jenkins
