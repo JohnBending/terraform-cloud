@@ -1,44 +1,37 @@
-data "aws_ami" "latest_amazon_linux" {
-  owners      = ["137112412989"]
-  most_recent = true
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
-  }
+provider "aws" {
+  region                  = "us-east-2"
+  shared_credentials_file = "/Users/iandreev/.aws/credentials"
 }
 
-resource "aws_instance" "web" {
-  ami                    = data.aws_ami.latest_amazon_linux.id
-  instance_type          = var.server_size
-  vpc_security_group_ids = [aws_security_group.web.id]
-  key_name               = "lesson-50"
-  user_data              = <<EOF
-#!/bin/bash
-wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
-sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > \
-    /etc/apt/sources.list.d/jenkins.list'
-sudo apt-get update
-sudo apt-get install -y jenkins
-sudo apt update
-sudo apt search openjdk
-sudo apt install -y openjdk-11-jdk
-sudo apt install -y openjdk-11-jdk
-java -version
-sudo systemctl daemon-reload
-sudo systemctl start jenkins
-EOF
-
+# Создание и привязывание IP адресса
+resource "aws_eip" "my_static_ip" {
+  instance = aws_instance.my_ubuntu.id
   tags = {
-    Name  = "${var.server_name}-WebServer"
+    Name  = "Web Server IP"
     Owner = "Ivan Andreev"
   }
 }
 
-resource "aws_security_group" "web" {
-  name_prefix = "${var.server_name}-WebServer-SG"
+resource "aws_instance" "my_ubuntu" {
+  ami                    = "ami-00399ec92321828f5"
+  instance_type          = "t2.micro"
+  vpc_security_group_ids = [aws_security_group.my_webserver.id]
+  key_name               = "aws-key" //можно добавить имя ключа что бы был досуп по ssh
+  user_data              = file("script.sh")
+
+  tags = {
+    Name  = "Web Server Build by Terraform"
+    Owner = "Ivan Andreev"
+  }
+}
+
+resource "aws_security_group" "my_webserver" {
+  name        = "Dynamic security group"
+  description = "My WebServer security group"
+
 
   dynamic "ingress" {
-    for_each = ["80", "443", "8080", "55555"]
+    for_each = ["22", "80", "443", "8080", "51820"]
     content {
       description = "TLS from VPC"
       from_port   = ingress.value
@@ -48,23 +41,14 @@ resource "aws_security_group" "web" {
     }
   }
 
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["10.10.0.0/16"]
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
-    Name  = "${var.server_name}-WebServer SecurityGroup"
-    Owner = "Ivan Andreev"
-  }
-}
-
-resource "aws_eip" "web" {
-  instance = aws_instance.web.id
-  tags = {
-    Name  = "${var.server_name}-WebServer-IP"
-    Owner = "Ivan Andreev rules"
+    Name = "my_webserver"
   }
 }
