@@ -16,7 +16,7 @@ resource "aws_instance" "my_ubuntu" {
   user_data              = file("script.sh")
 
   tags = {
-    Name  = "Jenkins-master Server Build by Terraform"
+    Name  = "srv-jenkins-001 Build by Terraform"
     Owner = "Ivan Andreev"
   }
 }
@@ -52,6 +52,6 @@ resource "aws_security_group" "my_webserver" {
   }
 
   tags = {
-    Name = "my_webserver"
+    Name = "srv-jenkins-001"
   }
 }
