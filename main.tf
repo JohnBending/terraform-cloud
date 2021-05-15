@@ -1,4 +1,4 @@
-
+#Autosearch ami
 data "aws_ami" "latest_ubuntu" {
   owners      = ["099720109477"]
   most_recent = true
@@ -21,7 +21,7 @@ resource "aws_instance" "my_ubuntu" {
   }
 }
 
-# Создание и привязывание IP адресса
+#Create static IP adreses from instance
 resource "aws_eip" "my_static_ip" {
   instance = aws_instance.my_ubuntu.id
   tags     = merge(var.common_tags, { Name = "${var.common_tags["Environment"]} Server IP" })
