@@ -29,8 +29,8 @@ resource "aws_eip" "my_static_ip" {
 }
 
 resource "aws_security_group" "my_webserver" {
-  name        = "Dynamic security group"
-  description = "My WebServer security group"
+  name        = "Jenkins security group"
+  description = "Jenkins security group"
 
 
   dynamic "ingress" {
